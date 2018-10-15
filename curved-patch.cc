@@ -43,11 +43,11 @@ int main(int argc, char **argv) {
   if (argc == 4)
     resolution = std::atoi(argv[3]);
 
-  auto surf = std::make_shared<CurvedGC>();
-  surf->setCurves(cv);
-  surf->setupLoop();
-  surf->update();
-  surf->eval(resolution).writeOBJ(argv[2]);
+  CurvedGC surf;
+  surf.setCurves(cv);
+  surf.setupLoop();
+  surf.update();
+  surf.eval(resolution).writeOBJ(argv[2]);
 
   return 0;
 }

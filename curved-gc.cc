@@ -10,7 +10,7 @@ using RibbonType = Transfinite::RibbonCompatibleWithHandler;
 
 CurvedGC::CurvedGC() {
   domain_ = std::make_shared<DomainType>();
-  param_ = std::make_shared<ParamType>();
+  param_ = std::make_shared<ParamType>(9); // 2^k x 2^k grid
   param_->setDomain(domain_);
 }
 
