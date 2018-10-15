@@ -1,11 +1,11 @@
 #include "curved-gc.hh"
 
-#include "domain-regular.hh"
-#include "parameterization-interconnected.hh"
+#include "curved-domain.hh"
+#include "harmonic.hh"
 #include "ribbon-compatible-with-handler.hh"
 
-using DomainType = Transfinite::DomainRegular;                 // <- CurvedDomain
-using ParamType = Transfinite::ParameterizationInterconnected; // <- ConstrainedHarmonic
+using DomainType = CurvedDomain;
+using ParamType = ConstrainedHarmonic;
 using RibbonType = Transfinite::RibbonCompatibleWithHandler;
 
 CurvedGC::CurvedGC() {

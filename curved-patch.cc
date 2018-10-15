@@ -4,8 +4,6 @@
 
 #include "curved-gc.hh"
 
-using namespace Geometry;
-
 CurveVector readLOP(std::string filename) {
   size_t n, deg, nk, nc;
   DoubleVector knots;
