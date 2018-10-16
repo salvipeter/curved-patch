@@ -2,6 +2,8 @@
 
 #include <algorithm>
 #include <cmath>
+#include <fstream>
+#include <sstream>
 
 #include "curved-domain.hh"
 
@@ -67,7 +69,21 @@ ConstrainedHarmonic::mapToRibbon(size_t i, const Point2D &uv) const {
 
 namespace {
 
-  void solve(HarmonicMap grid, size_t level) {
+    void writePPM(const HarmonicMap &m, std::string filename) {
+    size_t n = std::round(std::sqrt(m.size()));
+    std::ofstream f(filename);
+    f << "P3\n" << n << ' ' << n << "\n255\n";
+    for (size_t i = 0; i < n; ++i) {
+      for (size_t j = 0; j < n; ++j)
+        if (m[j*n+i].boundary)
+          f << "255 0 0 ";
+        else
+          f << "0 0 " << (int)std::round(m[j*n+i].value * 255.0) << ' ';
+      f << std::endl;
+    }
+  }
+
+  void solve(HarmonicMap &grid, size_t level) {
     size_t n = (size_t)std::pow(2, level);
     if (level > 3) {
       // Generate a coarser grid and solve that first to get good starting values
@@ -129,7 +145,7 @@ namespace {
       change /= (double)count;
     } while (change > 1.0e-5);  // kutykurutty
   }
-
+  
 }
 
 void
@@ -188,5 +204,12 @@ ConstrainedHarmonic::update() {
     }
     solve(m, levels_);
     maps_.push_back(m);
+
+    // Parameterization debug output
+    if (false) {
+      std::stringstream fname;
+      fname << "/tmp/domain-" << i << ".ppm";
+      writePPM(m, fname.str());
+    }
   }
 }
