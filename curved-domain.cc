@@ -1,5 +1,7 @@
 #include "curved-domain.hh"
 
+#include <sstream>
+
 #define ANSI_DECLARATORS
 #define REAL double
 #define VOID void
@@ -107,8 +109,14 @@ CurvedDomain::updateMesh(size_t resolution) {
   out.segmentlist = nullptr;
   out.segmentmarkerlist = nullptr;
 
-  char cmd[] = "pqa0.01DBPzQ";
-  triangulate(const_cast<char *>(cmd), &in, &out, (struct triangulateio *)nullptr);
+  double max_area = 0.0;
+  for (const auto &c : plane_curves_)
+    max_area = std::max(max_area, c.arcLength(0.0, 1.0));
+  max_area /= resolution;
+  max_area *= max_area * std::sqrt(3.0) / 4.0;
+  std::stringstream cmd;
+  cmd << "pqa" << std::fixed << max_area << "DBPzQ";
+  triangulate(const_cast<char *>(cmd.str().c_str()), &in, &out, (struct triangulateio *)nullptr);
 
   for (int i = 0; i < out.numberofpoints; ++i)
     parameters_.emplace_back(out.pointlist[2*i], out.pointlist[2*i+1]);
@@ -119,6 +127,13 @@ CurvedDomain::updateMesh(size_t resolution) {
                       out.trianglelist[3*i+2]);
 
   mesh_updated = true;
+
+  // Domain test:
+  // PointVector pv;
+  // for (const auto &p : parameters_)
+  //   pv.emplace_back(p[0], p[1], 0.0);
+  // mesh_.setPoints(pv);
+  // mesh_.writeOBJ("/tmp/domain.obj");
 }
 
 const Point2DVector &
