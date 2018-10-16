@@ -44,17 +44,22 @@ int main(int argc, char **argv) {
   if (argc == 4)
     resolution = std::atoi(argv[3]);
 
+  std::chrono::steady_clock::time_point begin, end;
+
+  begin = std::chrono::steady_clock::now();
   CurvedGC surf;
   surf.setCurves(cv);
   surf.setupLoop();
   surf.update();
+  end = std::chrono::steady_clock::now();
+  std::cout << "Setup time: "
+            << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
+            << "ms" << std::endl;
 
-  std::chrono::steady_clock::time_point begin, end;
   begin = std::chrono::steady_clock::now();
   surf.eval(resolution).writeOBJ(argv[2]);
   end = std::chrono::steady_clock::now();
-
-  std::cout << "Evaluation time : "
+  std::cout << "Evaluation time: "
             << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
             << "ms" << std::endl;
 

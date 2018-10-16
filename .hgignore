@@ -9,3 +9,5 @@ syntax: glob
 curved-patch
 *.lop
 *.obj
+*.skd
+kepek/*

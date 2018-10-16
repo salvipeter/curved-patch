@@ -30,10 +30,10 @@ ConstrainedHarmonic::harmonicMap(size_t i, const Point2D &uv) const {
   double bi = bc(i), bi_1 = bc(prev(i));
   double denom = bi + bi_1;
   if (denom < epsilon)
-    sd[0] = 0.0;                // kutykurutty
+    sd[0] = 0.0;                // should not matter, as sd[1] = 1
   else
     sd[0] = bi / denom;
-  sd[1] = 1.0 - bi - bi_1;
+  sd[1] = 1.0 - denom;
   return sd;
 }
 
@@ -143,14 +143,14 @@ namespace {
         index += 2;
       }
       change /= (double)count;
-    } while (change > 1.0e-5);  // kutykurutty
+    } while (change > 1.0e-5);  // kutykurutty [much smaller values slow down the algorithm]
   }
   
 }
 
 void
 ConstrainedHarmonic::update() {
-  const size_t resolution = 100;
+  const size_t resolution = size_ / 10;
   const auto &curves = dynamic_cast<CurvedDomain *>(domain_.get())->boundaries();
   n_ = curves.size();
   maps_.clear();

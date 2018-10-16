@@ -129,11 +129,13 @@ CurvedDomain::updateMesh(size_t resolution) {
   mesh_updated = true;
 
   // Domain test:
-  // PointVector pv;
-  // for (const auto &p : parameters_)
-  //   pv.emplace_back(p[0], p[1], 0.0);
-  // mesh_.setPoints(pv);
-  // mesh_.writeOBJ("/tmp/domain.obj");
+  if (false) {
+    PointVector pv;
+    for (const auto &p : parameters_)
+      pv.emplace_back(p[0], p[1], 0.0);
+    mesh_.setPoints(pv);
+    mesh_.writeOBJ("/tmp/domain.obj");
+  }
 }
 
 const Point2DVector &
