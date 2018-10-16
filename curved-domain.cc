@@ -6,7 +6,7 @@
 #define REAL double
 #define VOID void
 extern "C" {
-#include "triangle.h"
+#include <triangle.h>
 }
 
 #include "lsq-plane.hh"

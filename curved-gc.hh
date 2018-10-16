@@ -1,6 +1,6 @@
 #pragma once
 
-#include "surface.hh"
+#include <surface.hh>
 
 using namespace Geometry;
 using Transfinite::Ribbon;

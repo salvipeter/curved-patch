@@ -1,6 +1,6 @@
 #pragma once
 
-#include "domain.hh"
+#include <domain.hh>
 
 using namespace Geometry;
 using Transfinite::Domain;

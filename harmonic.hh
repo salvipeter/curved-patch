@@ -1,6 +1,6 @@
 #pragma once
 
-#include "parameterization.hh"
+#include <parameterization.hh>
 
 using namespace Geometry;
 using Transfinite::Parameterization;

@@ -1,3 +1,4 @@
+#include <chrono>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
@@ -47,7 +48,15 @@ int main(int argc, char **argv) {
   surf.setCurves(cv);
   surf.setupLoop();
   surf.update();
+
+  std::chrono::steady_clock::time_point begin, end;
+  begin = std::chrono::steady_clock::now();
   surf.eval(resolution).writeOBJ(argv[2]);
+  end = std::chrono::steady_clock::now();
+
+  std::cout << "Evaluation time : "
+            << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
+            << "ms" << std::endl;
 
   return 0;
 }

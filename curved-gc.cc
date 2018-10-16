@@ -1,8 +1,9 @@
 #include "curved-gc.hh"
 
+#include <ribbon-compatible-with-handler.hh>
+
 #include "curved-domain.hh"
 #include "harmonic.hh"
-#include "ribbon-compatible-with-handler.hh"
 
 using DomainType = CurvedDomain;
 using ParamType = ConstrainedHarmonic;
