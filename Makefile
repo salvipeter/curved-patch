@@ -6,7 +6,7 @@ TRIANGLE=/home/salvi/project/cl-nurbs/tests/shewchuk
 INCLUDES=-I/usr/include/eigen3 -I$(TRIANGLE) \
          -I$(TRANSFINITE)/src/geom -I$(TRANSFINITE)/src/transfinite
 LDFLAGS=-L$(TRANSFINITE)/debug/geom -L$(TRANSFINITE)/debug/transfinite
-LDLIBS=-lgeom -ltransfinite -lgsl -lm -lstdc++
+LDLIBS=-lgeom -ltransfinite -lgsl -lgslcblas -lm -lstdc++
 
 CXXFLAGS=-std=c++17 -g -Wall $(INCLUDES)
 
