@@ -5,6 +5,7 @@
 
 #include <surface-generalized-coons.hh>
 
+#include "curved-cb.hh"
 #include "curved-gc.hh"
 
 CurveVector readLOP(std::string filename) {
@@ -64,28 +65,31 @@ void surfaceTest(std::string name, std::shared_ptr<Surface> &&surf, const CurveV
 
   if (fix_mesh)
     fixMesh(mesh, cv, resolution); // computes exact boundaries
-  mesh.writeOBJ(filename);
+  mesh.writeOBJ(filename + "-" + name + ".obj");
 }
 
 int main(int argc, char **argv) {
-  if (argc < 3 || argc > 5) {
+  if (argc < 2 || argc > 3) {
     std::cerr << "Usage: " << argv[0]
-              << " infile.lop outfile.obj [resolution] [alternative.obj]" << std::endl;
+              << " basename [resolution]" << std::endl;
     return 1;
   }
-  CurveVector cv = readLOP(argv[1]);
+  std::string fname(argv[1]);
+
+  CurveVector cv = readLOP(fname + ".lop");
   if (cv.empty()) {
     std::cerr << "Cannot read file: " << argv[1] << std::endl;
     return 2;
   }
+  
   size_t resolution = 30;
-  if (argc >= 4)
-    resolution = std::atoi(argv[3]);
+  if (argc == 3)
+    resolution = std::atoi(argv[2]);
 
-  surfaceTest("CGC", std::make_shared<CurvedGC>(), cv, argv[2], resolution, true);
-  if (argc >= 5)
-    surfaceTest("GC", std::make_shared<Transfinite::SurfaceGeneralizedCoons>(),
-                cv, argv[4], resolution);
+  surfaceTest("CGC", std::make_shared<CurvedGC>(), cv, fname, resolution, true);
+  surfaceTest("CCB", std::make_shared<CurvedCB>(), cv, fname, resolution, true);
+  surfaceTest("GC", std::make_shared<Transfinite::SurfaceGeneralizedCoons>(),
+              cv, fname, resolution);
 
   return 0;
 }

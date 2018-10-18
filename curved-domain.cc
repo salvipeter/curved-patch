@@ -122,9 +122,9 @@ CurvedDomain::updateMesh(size_t resolution) {
     parameters_.emplace_back(out.pointlist[2*i], out.pointlist[2*i+1]);
   mesh_.resizePoints(parameters_.size());
   for (int i = 0; i < out.numberoftriangles; ++i)
-    mesh_.addTriangle(out.trianglelist[3*i+0],
+    mesh_.addTriangle(out.trianglelist[3*i+2],
                       out.trianglelist[3*i+1],
-                      out.trianglelist[3*i+2]);
+                      out.trianglelist[3*i+0]);
 
   mesh_updated = true;
 

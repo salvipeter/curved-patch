@@ -11,14 +11,13 @@ struct GridValue {
 };
 using HarmonicMap = std::vector<GridValue>;
 
-class ConstrainedHarmonic : public Parameterization {
+class Harmonic : public Parameterization {
 public:
-  ConstrainedHarmonic(size_t levels);
-  virtual ~ConstrainedHarmonic();
+  Harmonic(size_t levels);
+  virtual ~Harmonic();
   virtual Point2D mapToRibbon(size_t i, const Point2D &uv) const override;
   virtual void update() override;
 private:
-  Point2D harmonicMap(size_t i, const Point2D &uv) const;
   size_t levels_, size_;
   std::vector<HarmonicMap> maps_;
 };
