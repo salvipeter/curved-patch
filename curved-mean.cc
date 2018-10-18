@@ -79,13 +79,38 @@ where
   IntegralData id = {curves, uv, i};
   numerator.function   = &integrand; numerator.params   = &id;
   denominator.function = &integrand; denominator.params = &id;
-  double num_int, denom_int, err;
+  double num_int, denom_int;
+  
+#define CHEBYSHEV
+#ifdef ROMBERG
+  size_t N = 10;
+  double epsabs = 1.0e-5, epsrel = 1.0e-3;
   size_t neval;
-  gsl_integration_cquad_workspace *w = gsl_integration_cquad_workspace_alloc(100);
-  gsl_integration_cquad(&numerator, 0.0, 2.0 * M_PI, 1.0e-5, 1.0e-3, w, &num_int, &err, &neval);
+  auto *w = gsl_integration_romberg_alloc(N);
+  gsl_integration_romberg(&numerator, 0.0, 2.0 * M_PI, epsabs, epsrel, &num_int, &neval, w);
   id.i = curves.size();
-  gsl_integration_cquad(&denominator, 0.0, 2.0 * M_PI, 1.0e-5, 1.0e-3, w, &denom_int, &err, &neval);
+  gsl_integration_romberg(&denominator, 0.0, 2.0 * M_PI, epsabs, epsrel, &denom_int, &neval, w);
+  gsl_integration_romberg_free(w);
+#endif
+#ifdef CHEBYSHEV
+  size_t N = 10;
+  auto *w = gsl_integration_fixed_alloc(gsl_integration_fixed_chebyshev, N, 0.0, 2 * M_PI, 0, 0);
+  gsl_integration_fixed(&numerator, &num_int, w);
+  id.i = curves.size();
+  gsl_integration_fixed(&denominator, &denom_int, w);
+  gsl_integration_fixed_free(w);
+#endif
+#ifdef CQUAD
+  double epsabs = 1.0e-5, epsrel = 1.0e-3;
+  size_t neval;
+  double err;
+  auto *w = gsl_integration_cquad_workspace_alloc(100);
+  gsl_integration_cquad(&numerator, 0.0, 2.0 * M_PI, epsabs, epsrel, w, &num_int, &err, &neval);
+  id.i = curves.size();
+  gsl_integration_cquad(&denominator, 0.0, 2.0 * M_PI, epsabs, epsrel, w, &denom_int, &err, &neval);
   gsl_integration_cquad_workspace_free(w);
+#endif
+
   return Point2D(0.0, num_int / denom_int);         // dummy s parameter (!)
 }
 
