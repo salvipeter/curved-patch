@@ -6,7 +6,7 @@ TRIANGLE=/home/salvi/project/cl-nurbs/tests/shewchuk
 INCLUDES=-I/usr/include/eigen3 -I$(TRIANGLE) \
          -I$(TRANSFINITE)/src/geom -I$(TRANSFINITE)/src/transfinite
 LDFLAGS=-L$(TRANSFINITE)/debug/geom -L$(TRANSFINITE)/debug/transfinite
-LDLIBS=-lgeom -ltransfinite -lm -lstdc++
+LDLIBS=-lgeom -ltransfinite -lgsl -lm -lstdc++
 
 CXXFLAGS=-std=c++17 -g -Wall $(INCLUDES)
 
@@ -16,6 +16,7 @@ OBJECTS=curved-patch.o \
         lsq-plane.o \
 	harmonic.o \
 	constrained-harmonic.o \
+	curved-mean.o \
 	curved-domain.o
 
 curved-patch: $(OBJECTS) $(TRIANGLE)/triangle.o
