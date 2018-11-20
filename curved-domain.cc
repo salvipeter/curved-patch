@@ -112,7 +112,7 @@ CurvedDomain::updateMesh(size_t resolution) {
   double max_area = 0.0;
   for (const auto &c : plane_curves_)
     max_area = std::max(max_area, c.arcLength(0.0, 1.0));
-  max_area /= resolution;
+  max_area /= resolution * 2;
   max_area *= max_area * std::sqrt(3.0) / 4.0;
   std::stringstream cmd;
   cmd << "pqa" << std::fixed << max_area << "DBPzQ";
