@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 
+#include <surface-corner-based.hh>
 #include <surface-generalized-coons.hh>
 
 #include "curved-cb.hh"
@@ -89,6 +90,8 @@ int main(int argc, char **argv) {
   surfaceTest("CGC", std::make_shared<CurvedGC>(), cv, fname, resolution, true);
   surfaceTest("CCB", std::make_shared<CurvedCB>(), cv, fname, resolution, true);
   surfaceTest("GC", std::make_shared<Transfinite::SurfaceGeneralizedCoons>(),
+              cv, fname, resolution);
+  surfaceTest("CB", std::make_shared<Transfinite::SurfaceCornerBased>(),
               cv, fname, resolution);
 
   return 0;
