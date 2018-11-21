@@ -1,13 +1,13 @@
 #include "curved-gc.hh"
 
-#include <ribbon-compatible-with-handler.hh>
+#include <ribbon-perpendicular.hh>
 
 #include "curved-domain.hh"
 #include "constrained-harmonic.hh"
 
 using DomainType = CurvedDomain;
 using ParamType = ConstrainedHarmonic;
-using RibbonType = Transfinite::RibbonCompatibleWithHandler;
+using RibbonType = Transfinite::RibbonPerpendicular;
 
 CurvedGC::CurvedGC() {
   domain_ = std::make_shared<DomainType>();

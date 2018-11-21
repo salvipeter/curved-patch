@@ -1,13 +1,13 @@
 #include "curved-cb.hh"
 
-#include <ribbon-compatible-with-handler.hh>
+#include <ribbon-perpendicular.hh>
 
 #include "curved-domain.hh"
 #include "harmonic.hh"
 
 using DomainType = CurvedDomain;
 using ParamType = Harmonic;
-using RibbonType = Transfinite::RibbonCompatibleWithHandler;
+using RibbonType = Transfinite::RibbonPerpendicular;
 
 CurvedCB::CurvedCB() {
   domain_ = std::make_shared<DomainType>();
