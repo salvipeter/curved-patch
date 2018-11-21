@@ -8,6 +8,7 @@
 
 #include "curved-cb.hh"
 #include "curved-gc.hh"
+#include "perpendicular-cb.hh"
 
 CurveVector readLOP(std::string filename) {
   size_t n, deg, nk, nc;
@@ -87,12 +88,13 @@ int main(int argc, char **argv) {
   if (argc == 3)
     resolution = std::atoi(argv[2]);
 
-  surfaceTest("CGC", std::make_shared<CurvedGC>(), cv, fname, resolution, true);
+  // surfaceTest("CGC", std::make_shared<CurvedGC>(), cv, fname, resolution, true);
   surfaceTest("CCB", std::make_shared<CurvedCB>(), cv, fname, resolution, true);
-  surfaceTest("GC", std::make_shared<Transfinite::SurfaceGeneralizedCoons>(),
-              cv, fname, resolution);
-  surfaceTest("CB", std::make_shared<Transfinite::SurfaceCornerBased>(),
-              cv, fname, resolution);
+  // surfaceTest("GC", std::make_shared<Transfinite::SurfaceGeneralizedCoons>(),
+  //             cv, fname, resolution);
+  // surfaceTest("CB", std::make_shared<Transfinite::SurfaceCornerBased>(),
+  //             cv, fname, resolution);
+  surfaceTest("PCB", std::make_shared<PerpCB>(), cv, fname, resolution);
 
   return 0;
 }

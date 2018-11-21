@@ -13,6 +13,7 @@ CXXFLAGS=-std=c++17 -g -Wall $(INCLUDES)
 OBJECTS=curved-patch.o \
 	curved-gc.o \
 	curved-cb.o \
+	perpendicular-cb.o \
         lsq-plane.o \
 	harmonic.o \
 	constrained-harmonic.o \
