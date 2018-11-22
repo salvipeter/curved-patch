@@ -1,8 +1,11 @@
+#include <algorithm>
 #include <chrono>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
 
+#include <domain.hh>
+#include <parameterization.hh>
 #include <surface-corner-based.hh>
 #include <surface-generalized-coons.hh>
 
@@ -44,6 +47,33 @@ void fixMesh(TriMesh &mesh, const CurveVector &cv, size_t resolution) {
     }
 }
 
+void
+domainEval(const std::shared_ptr<Surface> &surf, size_t resolution, std::string filename) {
+  auto mesh = surf->domain()->meshTopology(resolution);
+  auto uvs = surf->domain()->parameters(resolution);
+  std::vector<Point2DVector> points; points.reserve(uvs.size());
+  std::transform(uvs.begin(), uvs.end(), std::back_inserter(points),
+                 [&](const Point2D &uv) {
+                   auto sds = surf->parameterization()->mapToRibbons(uv);
+                   sds.push_back(uv);
+                   return sds;
+                 });
+  std::ofstream f(filename);
+  if (!f.is_open()) {
+    std::cerr << "Unable to open file: " << filename << std::endl;
+    return;
+  }
+  for (const auto &p : points) {
+    f << 'v';
+    for (auto coord : p)
+      f << ' ' << coord[0] << ' ' << coord[1];
+    f << std::endl;
+  }
+  for (const auto &t : mesh.triangles())
+    f << "f " << t[0] + 1 << ' ' << t[1] + 1 << ' ' << t[2] + 1 << std::endl;
+  f.close();
+}
+
 void surfaceTest(std::string name, std::shared_ptr<Surface> &&surf, const CurveVector &cv,
                  std::string filename, size_t resolution, bool fix_mesh = false) {
   std::cout << name << ":" << std::endl;
@@ -58,6 +88,15 @@ void surfaceTest(std::string name, std::shared_ptr<Surface> &&surf, const CurveV
             << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
             << "ms" << std::endl;
 
+  if (name == "CCB") {
+    begin = std::chrono::steady_clock::now();
+    domainEval(surf, resolution, filename + "-domain.obj");
+    end = std::chrono::steady_clock::now();
+    std::cout << "  Domain output time: "
+              << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
+              << "ms" << std::endl;
+  }
+  
   begin = std::chrono::steady_clock::now();
   auto mesh = surf->eval(resolution);
   end = std::chrono::steady_clock::now();

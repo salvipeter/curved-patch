@@ -115,7 +115,7 @@ CurvedDomain::updateMesh(size_t resolution) {
   max_area /= resolution * 2;
   max_area *= max_area * std::sqrt(3.0) / 4.0;
   std::stringstream cmd;
-  cmd << "pqa" << std::fixed << max_area << "DBPzQ";
+  cmd << "pq30a" << std::fixed << max_area << "DBPzQ";
   triangulate(const_cast<char *>(cmd.str().c_str()), &in, &out, (struct triangulateio *)nullptr);
 
   for (int i = 0; i < out.numberofpoints; ++i)
