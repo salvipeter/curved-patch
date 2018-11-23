@@ -47,6 +47,68 @@ void fixMesh(TriMesh &mesh, const CurveVector &cv, size_t resolution) {
     }
 }
 
+std::vector<std::pair<Point3D, Point3D>>
+slicer(const TriMesh &mesh, const std::vector<Point2DVector> &params) {
+  const double density = 0.1;
+  const size_t nr_lines = 5;
+  std::vector<std::pair<Point3D, Point3D>> result;
+  for (size_t param = 0; param < params[0].size(); ++param) {
+    auto slice = [&](size_t i, size_t j, Point3D &p) {
+                   double x = params[i][param][1], y = params[j][param][1]; // d-coordinates
+                   if (y > x) {
+                     std::swap(x, y);
+                     std::swap(i, j);
+                   }
+                   size_t q1 = x / density, q2 = y / density;
+                   if (q1 - q2 == 1 && q1 <= nr_lines) {
+                     double alpha = (density * q1 - y) / (x - y);
+                     p = mesh[j] * (1 - alpha) + mesh[i] * alpha;
+                     return true;
+                   }
+                   return false;
+                 };
+    for (const auto &tri : mesh.triangles()) {
+      Point3D p;
+      PointVector ps;
+      if (slice(tri[0], tri[1], p))
+        ps.push_back(p);
+      if (slice(tri[0], tri[2], p))
+        ps.push_back(p);
+      if (slice(tri[1], tri[2], p))
+        ps.push_back(p);
+      if (ps.size() == 2)
+        result.push_back({ ps[0], ps[1] });
+    }
+  }
+  return result;
+}
+
+void
+domainEval3D(const std::shared_ptr<Surface> &surf, size_t resolution, std::string filename) {
+  auto mesh = surf->domain()->meshTopology(resolution);
+  auto uvs = surf->domain()->parameters(resolution);
+  std::vector<Point2DVector> params; params.reserve(uvs.size());
+  std::transform(uvs.begin(), uvs.end(), std::back_inserter(params),
+                 [&](const Point2D &uv) { return surf->parameterization()->mapToRibbons(uv); });
+  PointVector points; points.reserve(uvs.size());
+  std::transform(uvs.begin(), uvs.end(), std::back_inserter(points),
+                 [&](const Point2D &uv) { return surf->eval(uv); });
+  mesh.setPoints(points);
+  auto segments = slicer(mesh, params);
+  std::ofstream f(filename);
+  if (!f.is_open()) {
+    std::cerr << "Unable to open file: " << filename << std::endl;
+    return;
+  }
+  for (const auto &s : segments) {
+    f << "v " << s.first[0] << ' ' << s.first[1] << ' ' << s.first[2] << std::endl;
+    f << "v " << s.second[0] << ' ' << s.second[1] << ' ' << s.second[2] << std::endl;
+  }
+  for (size_t i = 1; i <= segments.size(); ++i)
+    f << "l " << 2*i-1 << ' ' << 2*i << std::endl;
+  f.close();
+}
+
 void
 domainEval(const std::shared_ptr<Surface> &surf, size_t resolution, std::string filename) {
   auto mesh = surf->domain()->meshTopology(resolution);
@@ -91,6 +153,7 @@ void surfaceTest(std::string name, std::shared_ptr<Surface> &&surf, const CurveV
   if (name == "CCB") {
     begin = std::chrono::steady_clock::now();
     domainEval(surf, resolution, filename + "-domain.obj");
+    domainEval3D(surf, resolution, filename + "-domain3D.obj");
     end = std::chrono::steady_clock::now();
     std::cout << "  Domain output time: "
               << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
