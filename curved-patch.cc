@@ -6,6 +6,7 @@
 
 #include <domain.hh>
 #include <parameterization.hh>
+#include <ribbon.hh>
 #include <surface-corner-based.hh>
 #include <surface-generalized-coons.hh>
 
@@ -36,6 +37,33 @@ CurveVector readLOP(std::string filename) {
   if (!f)
     return CurveVector();
   return result;
+}
+
+void ribbonTest(const std::shared_ptr<Surface> &surf, size_t resolution, std::string filename) {
+  double ribbon_length = 0.25;
+
+  size_t n = surf->domain()->size();
+  TriMesh ribbon_mesh;
+  PointVector pv; pv.reserve(n * (resolution + 1) * 2);
+  for (size_t i = 0; i < n; ++i) {
+    for (size_t j = 0; j <= resolution; ++j) {
+      double u = (double)j / resolution;
+      pv.push_back(surf->ribbon(i)->curve()->eval(u));
+      pv.push_back(surf->ribbon(i)->eval(Point2D(u, ribbon_length)));
+    }
+  }
+  ribbon_mesh.setPoints(pv);
+  size_t index = 0;
+  for (size_t i = 0; i < n; ++i) {
+    for (size_t j = 0; j < resolution; ++j) {
+      ribbon_mesh.addTriangle(index, index+1, index+2);
+      ++index;
+      ribbon_mesh.addTriangle(index, index+2, index+1);
+      ++index;
+    }
+    index += 2;
+  }
+  ribbon_mesh.writeOBJ(filename);  
 }
 
 void fixMesh(TriMesh &mesh, const CurveVector &cv, size_t resolution) {
@@ -151,6 +179,13 @@ void surfaceTest(std::string name, std::shared_ptr<Surface> &&surf, const CurveV
             << "ms" << std::endl;
 
   if (name == "CCB") {
+    begin = std::chrono::steady_clock::now();
+    ribbonTest(surf, resolution, filename + "-ribbons.obj");
+    end = std::chrono::steady_clock::now();
+    std::cout << "  Ribbon output time: "
+              << std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count()
+              << "ms" << std::endl;
+
     begin = std::chrono::steady_clock::now();
     domainEval(surf, resolution, filename + "-domain.obj");
     domainEval3D(surf, resolution, filename + "-domain3D.obj");
