@@ -128,7 +128,7 @@ function run(filename)
     win = GtkWindow("Parameterization Test")
     vbox = GtkBox(:v)
 
-    canvas = GtkCanvas(800, 800)
+    canvas = GtkCanvas(600, 600)
     draw(draw_callback, canvas)
 
     push!(win, vbox)

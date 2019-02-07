@@ -11,6 +11,7 @@
 #include <surface-generalized-coons.hh>
 
 #include "curved-cb.hh"
+#include "curved-cr.hh"
 #include "curved-gc.hh"
 #include "perpendicular-cb.hh"
 
@@ -227,6 +228,7 @@ int main(int argc, char **argv) {
 
   // surfaceTest("CGC", std::make_shared<CurvedGC>(), cv, fname, resolution, true);
   surfaceTest("CCB", std::make_shared<CurvedCB>(), cv, fname, resolution, true);
+  // surfaceTest("CCR", std::make_shared<CurvedCR>(), cv, fname, resolution, false);
   // surfaceTest("GC", std::make_shared<Transfinite::SurfaceGeneralizedCoons>(),
   //             cv, fname, resolution);
   // surfaceTest("CB", std::make_shared<Transfinite::SurfaceCornerBased>(),
